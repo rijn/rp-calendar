@@ -5,15 +5,14 @@
 </template>
 
 <script>
-let today = new Date();
-
 export default {
   name: 'app',
   data () {
     return {
     };
   },
-  methods: {
+  mount () {
+    console.log(this.$sforce);
   }
 };
 </script>
