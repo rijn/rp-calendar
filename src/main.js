@@ -1,14 +1,11 @@
-import Vue from 'vue'
-import App from './App'
+import Vue from 'vue';
+import App from './App';
 
-import './components/vue-event-calendar/dist/style.css'
-import vueEventCalendar from './components/vue-event-calendar'
-Vue.use(vueEventCalendar, { locale: 'en' })
+Vue.config.productionTip = false;
 
-Vue.config.productionTip = false
-
+// eslint-disable-next-line
 new Vue({
   el: '#app',
   template: '<App/>',
   components: { App }
-})
+});
