@@ -11,12 +11,9 @@
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
-
   require('time-grunt')(grunt);
 
   const webpackConfig = require('./build/webpack.dev.conf').devWebpackConfig;
-
-  console.log(webpackConfig);
 
   grunt.initConfig({
     shell: {

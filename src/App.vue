@@ -12,7 +12,7 @@ export default {
     };
   },
   mounted () {
-    console.log(this.$sforce);
+    console.log(this.$jsforce);
   }
 };
 </script>
