@@ -8,14 +8,22 @@ if (process.env.NODE_ENV == 'development') {
 
 Vue.config.productionTip = false;
 
-var conn = new jsforce.Connection({
+var _jsforce = new jsforce.Connection({
   // instanceUrl: 'https://c.cs91.visual.force.com',
   version: '41.0',
   accessToken: window.__sfdcSessionId
 });
 
 Vue.prototype.$sforce = window.sforce;
-Vue.prototype.$jsforce = window.jsforce = conn;
+
+window.jsforce = _jsforce;
+Vue.prototype.$jsforce = {
+  query: q => new Promise((resolve, reject) => {
+    _jsforce.query(q, (err, result) => {
+      if (err) reject(err); else resolve(result);
+    })
+  })
+}
 
 // eslint-disable-next-line
 new Vue({

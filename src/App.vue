@@ -12,7 +12,9 @@ export default {
     };
   },
   mounted () {
-    console.log(this.$jsforce);
+    this.$jsforce.query('SELECT Name FROM Agtech_Summit__c').then(res => {
+      console.log(res);
+    });
   }
 };
 </script>
