@@ -11,7 +11,7 @@ export default {
     return {
     };
   },
-  mount () {
+  mounted () {
     console.log(this.$sforce);
   }
 };
