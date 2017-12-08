@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  var __sfdcSessionId = '{!GETSESSIONID()}';
+window.__sfdcSessionId = '{!GETSESSIONID()}';
 </script>
 <script src="../../soap/ajax/41.0/connection.js" type="text/javascript"></script>
 <div id="app"></div>
