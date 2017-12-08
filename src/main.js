@@ -11,8 +11,8 @@ console.log(`session ${__sfdcSessionId}`);
 Vue.config.productionTip = false;
 
 var conn = new jsforce.Connection({
-  instanceUrl: 'https://c.cs91.visual.force.com',
-  version: '41.0',
+  // instanceUrl: 'https://c.cs91.visual.force.com',
+  // version: '41.0',
   accessToken: __sfdcSessionId
 });
 
