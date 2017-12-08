@@ -16,7 +16,7 @@ var conn = new jsforce.Connection({
   accessToken: __sfdcSessionId
 });
 
-conn.metadata.describe('41.0', function (err, metadata) {
+conn.metadata.describe('39.0', function (err, metadata) {
   if (err) { return console.error('err', err); }
   console.log(metadata);
   for (var i = 0; i < metadata.length; i++) {
