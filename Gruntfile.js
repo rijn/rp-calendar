@@ -19,6 +19,9 @@ module.exports = function (grunt) {
     shell: {
       build: {
         command: 'node ./build/build.js --colors'
+      },
+      tunnel: {
+        command: 'ngrok http 8080 -host-header="localhost:8080"'
       }
     },
     watch: {
@@ -60,6 +63,13 @@ module.exports = function (grunt) {
     grunt.task.run([
       'eslint',
       'webpack-dev-server:dev'
+    ]);
+  });
+
+  grunt.registerTask('tunnel', function () {
+    grunt.log.write('Tunnel will be open at localhost:4040');
+    grunt.task.run([
+      'shell:tunnel'
     ]);
   });
 };

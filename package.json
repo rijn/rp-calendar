@@ -10,9 +10,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "jquery": "^3.2.1",
     "jsforce": "^1.8.0",
+    "moment": "^2.20.1",
     "vue": "^2.5.2",
-    "vue-event-calendar": "^1.5.1"
+    "vue-event-calendar": "^1.5.1",
+    "vue-full-calendar": "^2.5.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
