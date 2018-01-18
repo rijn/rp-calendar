@@ -5,6 +5,7 @@
         style="width: 200px"
         src="http://researchpark.illinois.edu/sites/default/files/color/researchpark-04a05bde/logo.png">
       <h3 style="margin: 0">ResearchPark Event Calendar</h3>
+      <router-link :to="{ path: '/new' }" class="ma-button"><el-button type="primary" size="small">Make Appointment</el-button></router-link>
     </el-header>
     <transition name="el-fade-in-linear">
       <keep-alive>
@@ -40,7 +41,19 @@ export default {
 
 .header {
   background: #f5f5f5;
-  border-bottom: solid 1px #ddd;
+  /*border-bottom: solid 1px #ddd;*/
+  box-shadow: 0 0 50px 0px rgba(0,0,0,.16);
   padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.ma-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
 }
 </style>

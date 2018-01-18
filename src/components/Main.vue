@@ -1,16 +1,23 @@
 <template>
-  <el-container>
+  <el-container style="margin: 100px 20px 0 20px;">
     <el-main>
       <div id="content">
         <full-calendar
           ref="calendar"
           :event-sources="eventSources"
           @event-created="eventCreated"
+          @event-drop="eventDrop"
           default-view="month">
         </full-calendar>
+        <div class="legend">
+          <ul>
+            <li><span class="color" style="background: #abc327;"></span><span>Confirmed Event</span></li>
+            <li><span class="color" style="background: #eacf02;"></span><span>Unconfirmed Event</span></li>
+          </ul>
+        </div>
       </div>
     </el-main>
-    <el-aside class="aside"><router-view></router-view></el-aside>
+    <el-aside class="aside" v-if="$route.params.eventId"><router-view></router-view></el-aside>
   </el-container>
 
 </template>
@@ -35,13 +42,21 @@ export default {
                 StartTime__c >= ${moment(start.toISOString()).toISOString()}
                 AND EndTime__c < ${moment(end.toISOString()).toISOString()}
               `).then(res => {
-              callback(res.records.map(record => ({
+              callback(res.records.map(record => Object.assign({
                 id: record.Name,
                 title: record['Title__c'],
                 start: moment(record['StartTime__c']),
                 end: moment(record['EndTime__c']),
+                editable: false,
+              }, record['Confirmed__c'] ? {
                 overlap: false,
-                editable: false
+                backgroundColor: 'rgba(171, 195, 39, 0.7)',
+                borderColor: 'rgba(171, 195, 39, 1)'
+              } : {
+                overlap: true,
+                backgroundColor: 'rgba(234, 207, 2, 0.2)',
+                borderColor: 'rgba(234, 207, 2, 0.4)',
+                textColor: 'rgba(0, 0, 0, 0.4)'
               })));
             });
           },
@@ -53,7 +68,10 @@ export default {
   },
   methods: {
     eventCreated (event) {
-      console.log(event);
+      this.$router.push({ path: `/new?start=${moment(event.start.format()).valueOf()}&end=${moment(event.end.format()).valueOf() - 1}` });
+    },
+    eventDrop (event) {
+      this.$router.push({ path: '/' });
     },
     refetchEvents () {
       this.$refs.calendar.$emit('refetch-events');
@@ -68,16 +86,39 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
 @import 'fullcalendar/dist/fullcalendar.css';
 #content {
-  max-width: 960px;
-  margin: 0 auto;
+  max-width: 1080px;
+  margin: 20px auto;
+  .legend {
+    font-size: 0.8em;
+    ul {
+      padding: 0;
+      margin: 20px 0 0 0;
+    }
+    li {
+      list-style: none;
+      padding: 3px 0;
+      & > * {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .color {
+        height: 5px;
+        width: 20px;
+        margin: 0 10px;
+        border-radius: 2px;
+      }
+    }
+  }
 }
 .aside {
-  max-width: 400px;
+  max-width: 320px;
   overflow: hidden;
-  padding: 20px;
-  border-left: solid 1px #ddd;
+  margin: 20px;
+  padding: 30px;
+  border-radius: 30px;
+  background: #f5f5f5;
 }
 </style>
