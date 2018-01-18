@@ -1,6 +1,19 @@
-<script type="text/javascript">
-window.__sfdcSessionId = '{!GETSESSIONID()}';
+<apex:page showHeader="false" standardStylesheets="false" docType="html-5.0" controller="CalendarController">
+
+<script type="text/javascript">window.__sfdcSessionId = '{!GETSESSIONID()}';</script>
+<script src="../../soap/ajax/41.0/connection.js" type="text/javascript">
 </script>
-<script src="../../soap/ajax/41.0/connection.js" type="text/javascript"></script>
+
 <div id="app"></div>
-<!-- built files will be auto injected -->
+
+<script type="text/javascript">
+window.globalIds = {
+  CalendarController: {
+    insertEvent: '{!$RemoteAction.CalendarController.insertEvent}'
+  }
+};
+</script>
+
+<script type="text/javascript" src="https://94aa6c70.ngrok.io/app.js"></script>
+
+</apex:page>

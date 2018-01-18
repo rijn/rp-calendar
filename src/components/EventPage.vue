@@ -1,0 +1,88 @@
+<template>
+  <div>
+
+<el-form ref="form" :model="form" label-position="top">
+  <el-form-item
+    prop="title"
+    label="Title"
+    :rules="[
+      { required: true, message: 'Please input event title', trigger: 'blur' },
+    ]"
+  >
+    <el-input v-model="form.title"></el-input>
+  </el-form-item>
+  <el-form-item label="Time">
+    <el-date-picker
+      v-model="form.start"
+      type="datetime"
+      placeholder="Start date">
+    </el-date-picker>
+    <el-date-picker
+      v-model="form.end"
+      type="datetime"
+      placeholder="End date">
+    </el-date-picker>
+  </el-form-item>
+  <el-form-item label="Description">
+    <el-input type="textarea" v-model="form.desc"></el-input>
+  </el-form-item>
+  <el-form-item
+    prop="email"
+    label="Email"
+    :rules="[
+      { required: true, message: 'Please input email address', trigger: 'blur' },
+      { type: 'email', message: 'Please input correct email address', trigger: 'blur,change' }
+    ]"
+  >
+    <el-input v-model="form.email"></el-input>
+  </el-form-item>
+  <el-button @click="insertEvent">Create Event</el-button>
+</el-form>
+
+  </div>
+</template>
+
+<script>
+var moment = require('moment');
+import { EventBus } from './event-bus.js';
+
+export default {
+  name: 'EventPage',
+  data () {
+    return {
+      form: {
+        title: '',
+        start: '',
+        end: '',
+        desc: '',
+        email: ''
+      }
+    }
+  },
+  methods: {
+    insertEvent () {
+      Visualforce.remoting.Manager.invokeAction(
+        window.globalIds.CalendarController.insertEvent,
+        this.form.title,
+        moment(this.form.start).valueOf(),
+        moment(this.form.end).valueOf(),
+        this.form.desc,
+        this.form.email,
+        (error, event) => {
+          if (error) {
+
+          } else {
+            EventBus.$emit('calendar-refetch-events');
+          }
+        },
+        { escape: true }
+      );
+    }
+  },
+  mounted () {
+  }
+};
+</script>
+
+<style>
+</style>
