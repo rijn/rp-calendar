@@ -70,27 +70,33 @@ export default {
 
       forEach(this.$route.query, (value, key) => {
         if (this.form.hasOwnProperty(key)) {
-          this.form[key] = key === 'start' || key === 'end' ? moment(Number(value)) : value;
+          this.form[key] = key === 'start' || key === 'end' ? moment(Number(value)).toDate() : value;
         }
       });
     },
     insertEvent () {
-      Visualforce.remoting.Manager.invokeAction(
-        window.globalIds.CalendarController.insertEvent,
-        this.form.title,
-        moment(this.form.start).valueOf(),
-        moment(this.form.end).valueOf(),
-        this.form.desc,
-        this.form.email,
-        (error, event) => {
-          if (error) {
-
-          } else {
-            EventBus.$emit('calendar-refetch-events');
-          }
-        },
-        { escape: true }
-      );
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          Visualforce.remoting.Manager.invokeAction(
+            window.globalIds.CalendarController.insertEvent,
+            this.form.title,
+            moment(this.form.start).valueOf(),
+            moment(this.form.end).valueOf(),
+            this.form.desc,
+            this.form.email,
+            (error, event) => {
+              if (error) {
+                this.$error(error);
+              } else {
+                EventBus.$emit('calendar-refetch-events');
+              }
+            },
+            { escape: true }
+          );
+        } else {
+          return false;
+        }
+      });
     },
     cancel () {
       this.$router.push({ path: '/' });
