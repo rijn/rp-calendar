@@ -1,24 +1,27 @@
 <template>
-  <el-container style="margin: 100px 20px 0 20px;">
-    <el-main>
+  <!-- <el-container style="margin: 100px 20px 0 20px;"> -->
+    <!-- <el-main> -->
       <div id="content">
+
+
         <full-calendar
           ref="calendar"
           :event-sources="eventSources"
           @event-created="eventCreated"
           @event-drop="eventDrop"
+          @day-click="dayClick"
           default-view="month">
         </full-calendar>
-        <div class="legend">
+<!--         <div class="legend">
           <ul>
             <li><span class="color" style="background: #abc327;"></span><span>Confirmed Event</span></li>
             <li><span class="color" style="background: #eacf02;"></span><span>Unconfirmed Event</span></li>
           </ul>
-        </div>
+        </div> -->
       </div>
-    </el-main>
-    <el-aside class="aside" v-if="$route.params.eventId"><router-view></router-view></el-aside>
-  </el-container>
+    <!-- </el-main> -->
+    <!-- <el-aside class="aside" v-if="$route.params.eventId"><router-view></router-view></el-aside> -->
+  <!-- </el-container> -->
 
 </template>
 
@@ -27,7 +30,8 @@ var moment = require('moment');
 import { EventBus } from './event-bus.js';
 
 export default {
-  name: 'main',
+  name: 'calendar',
+
   data () {
     return {
       eventSources: [
@@ -49,13 +53,13 @@ export default {
                 end: moment(record['EndTime__c']),
                 editable: false,
               }, record['Confirmed__c'] ? {
-                overlap: false,
+                title: 'Schduled',
                 backgroundColor: 'rgba(171, 195, 39, 0.7)',
                 borderColor: 'rgba(171, 195, 39, 1)'
               } : {
-                overlap: true,
-                backgroundColor: 'rgba(234, 207, 2, 0.2)',
-                borderColor: 'rgba(234, 207, 2, 0.4)',
+                title: 'Available',
+                backgroundColor: 'rgba(171, 195, 39, 0.2)',
+                borderColor: 'rgba(171, 195, 39, 0.4)',
                 textColor: 'rgba(0, 0, 0, 0.4)'
               })));
             });
@@ -68,7 +72,10 @@ export default {
   },
   methods: {
     eventCreated (event) {
-      this.$router.push({ path: `/new?start=${moment(event.start.format()).valueOf()}&end=${moment(event.end.format()).valueOf() - 1}` });
+      // this.$router.push({ path: `/new?start=${moment(event.start.format()).valueOf()}&end=${moment(event.end.format()).valueOf() - 1}` });
+    },
+    dayClick (date) {
+      this.$emit('select-date', date);
     },
     eventDrop (event) {
       this.$router.push({ path: '/' });
@@ -86,8 +93,7 @@ export default {
 };
 </script>
 
-<style lang="less">
-@import 'fullcalendar/dist/fullcalendar.css';
+<style scoped lang="less">
 #content {
   max-width: 1080px;
   margin: 20px auto;

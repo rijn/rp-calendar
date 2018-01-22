@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Main from '@/components/Main';
+import Calendar from '@/components/Calendar';
 import EventPage from '@/components/EventPage';
 
 Vue.use(Router);
@@ -10,10 +10,10 @@ let router = new Router({
   routes: [{
     path: '/',
     name: 'MainPage',
-    component: Main
+    component: Calendar
   }, {
     path: '/:eventId',
-    component: Main,
+    component: Calendar,
     children: [{
       path: '/',
       name: 'EventPage',
