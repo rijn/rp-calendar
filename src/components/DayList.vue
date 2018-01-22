@@ -37,7 +37,7 @@
           <el-button
             class="time-button"
             type="primary"
-            @click="clickSlot(slot.start)"
+            @click="clickSlot(slot)"
             plain>
             {{ moment.tz(slot.start.toISOString(), timezone).format(ampm ? "hh:mm a" : "HH:mm") }}
           </el-button>
@@ -80,7 +80,6 @@ export default {
 
   methods: {
     loadResources () {
-      console.log(this.date.toISOString());
       window.$jsforce.query(`
         SELECT
           Name, Title__c, Detail__c, StartTime__c, EndTime__c, Confirmed__c
@@ -111,7 +110,7 @@ export default {
       this.slot = slot;
     },
     confirm () {
-      this.$emit('select-time', this.slot);
+      this.$emit('select-slot', Object.assign({}, this.slot));
     }
   },
 
