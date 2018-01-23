@@ -37,6 +37,7 @@
 var moment = require('moment-timezone');
 import { EventBus } from './event-bus.js';
 import { forEach } from 'lodash';
+import { Loading } from 'element-ui';
 
 export default {
   name: 'ConfirmPage',
@@ -62,12 +63,14 @@ export default {
 
       this.$refs.form.validate((valid) => {
         if (valid) {
+          let loadingInstance = Loading.service({ fullscreen: true });
           Visualforce.remoting.Manager.invokeAction(
             window.globalIds.CalendarController.schedule,
             this.timeslot.id,
             this.form.name,
             this.form.email,
             (error, event) => {
+              loadingInstance.close();
               if (error) {
                 this.$error(error);
               } else {

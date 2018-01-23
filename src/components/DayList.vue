@@ -33,13 +33,16 @@
     </el-row>
     <el-row style="margin-top: 30px;">
       <ul>
-        <li v-for="slot in slots">
+        <li v-if="slots.length === 0">
+          unavailable
+        </li>
+        <li v-for="_slot in slots">
           <el-button
             class="time-button"
             type="primary"
-            @click="clickSlot(slot)"
-            plain>
-            {{ moment.tz(slot.start.toISOString(), timezone).format(ampm ? "hh:mm a" : "HH:mm") }}
+            @click="clickSlot(_slot)"
+            :plain="slot !== _slot">
+            {{ moment.tz(_slot.start.toISOString(), timezone).format(ampm ? "hh:mm a" : "HH:mm") }}
           </el-button>
         </li>
       </ul>
@@ -52,6 +55,7 @@
 
 <script>
 var moment = require('moment-timezone');
+import { Loading } from 'element-ui';
 
 export default {
   name: 'day-list',
@@ -80,6 +84,7 @@ export default {
 
   methods: {
     loadResources () {
+      let loadingInstance = Loading.service({ fullscreen: true });
       window.$jsforce.query(`
         SELECT
           Name, Title__c, Detail__c, StartTime__c, EndTime__c, Confirmed__c
@@ -87,8 +92,9 @@ export default {
           CalendarEvent__c
         WHERE
           StartTime__c >= ${moment.tz(this.date.toISOString(), "America/Chicago").format()}
-          AND EndTime__c < ${moment.tz(this.date.add(1, 'd').toISOString(), "America/Chicago").format()}
+          AND EndTime__c < ${moment.tz(this.date.clone().add(1, 'd').toISOString(), "America/Chicago").format()}
         `).then(res => {
+        loadingInstance.close();
         this.slots = res.records.map(record => Object.assign({
           id: record.Name,
           start: moment(record['StartTime__c']),

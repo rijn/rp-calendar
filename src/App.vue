@@ -119,11 +119,11 @@ export default {
 }
 
 .steps {
-  max-width: 700px;
+  max-width: 600px;
   margin: -40px 0 0 auto;
   /*position: absolute;*/
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 }

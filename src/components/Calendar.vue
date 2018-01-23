@@ -10,7 +10,14 @@
           @event-created="eventCreated"
           @event-drop="eventDrop"
           @day-click="dayClick"
-          default-view="month">
+          default-view="month"
+          :selectable="false"
+          :editable="false"
+          :header="{
+            left: 'prev,next today',
+            center: '',
+            right: 'title'
+          }">
         </full-calendar>
 <!--         <div class="legend">
           <ul>
@@ -28,6 +35,7 @@
 <script>
 var moment = require('moment');
 import { EventBus } from './event-bus.js';
+import { Loading } from 'element-ui';
 
 export default {
   name: 'calendar',
@@ -37,6 +45,7 @@ export default {
       eventSources: [
         {
           events(start, end, timezone, callback) {
+            let loadingInstance = Loading.service({ fullscreen: true });
             window.$jsforce.query(`
               SELECT
                 Name, Title__c, Detail__c, StartTime__c, EndTime__c, Confirmed__c
@@ -46,6 +55,7 @@ export default {
                 StartTime__c >= ${moment(start.toISOString()).toISOString()}
                 AND EndTime__c < ${moment(end.toISOString()).toISOString()}
               `).then(res => {
+              loadingInstance.close();
               callback(res.records.map(record => Object.assign({
                 id: record.Name,
                 title: record['Title__c'],

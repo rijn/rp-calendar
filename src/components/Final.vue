@@ -4,8 +4,9 @@
     <h2>Your request has been recorded.</h2>
     <br />
     <p>Your tour will be scheduled at</p>
-    <h3>{{ displayWeekday }}</h3>
-    <h4>{{ displayDate }}</h4>
+    <h3 style="margin-bottom: 0;">{{ displayWeekday }}</h3>
+    <h4 style="margin: 7px;">{{ displayDate }}</h4>
+    <h3>{{ displayTime }}</h3>
   </div>
 </template>
 
@@ -32,6 +33,9 @@ export default {
     displayDate: function () {
       return moment(this.timeslot.start.toISOString()).format("MMMM DD, Y");
     },
+    displayTime: function () {
+      return moment(this.timeslot.start.toISOString()).format("HH:mm");
+    }
   }
 };
 </script>
