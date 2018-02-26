@@ -11,6 +11,10 @@ import {
 import 'element-ui/lib/theme-chalk/index.css';
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
+import 'vue-event-calendar/dist/style.css';
+import vueEventCalendar from './components/vue-event-calendar';
+
+Vue.use(vueEventCalendar, {locale: 'en'});
 
 window.jQuery = window.$ = require('jquery');
 Vue.use(FullCalendar);
@@ -58,6 +62,16 @@ window.$jsforce = Vue.prototype.$jsforce = {
       if (err) reject(err); else resolve(result);
     });
   })
+};
+
+Vue.prototype.$rules = {
+  mappers: [
+    date => date.day() === 0 ? [] : [ { start: date.clone().set({ 'hour': 13, 'minute': 30 }), duration: { minute: 15 } } ],
+    date => date.day() === 0 ? [] : [ { start: date.clone().set({ 'hour': 14, 'minute': 30 }), duration: { minute: 15 } } ]
+  ],
+  filters: [
+    ({ start }) => start.format('YYYY-MM-DD') !== '2018-02-26'
+  ]
 };
 
 // eslint-disable-next-line

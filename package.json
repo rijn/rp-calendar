@@ -17,7 +17,7 @@
     "moment-timezone": "^0.5.14",
     "normalize.css": "^7.0.0",
     "vue": "^2.5.2",
-    "vue-event-calendar": "^1.5.1",
+    "vue-event-calendar": "^1.5.2",
     "vue-full-calendar": "^2.5.2",
     "vue-router": "^3.0.1"
   },

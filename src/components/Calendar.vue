@@ -2,9 +2,7 @@
   <!-- <el-container style="margin: 100px 20px 0 20px;"> -->
     <!-- <el-main> -->
       <div id="content">
-
-
-        <full-calendar
+<!--         <full-calendar
           ref="calendar"
           :event-sources="eventSources"
           @event-created="eventCreated"
@@ -18,7 +16,12 @@
             center: '',
             right: 'title'
           }">
-        </full-calendar>
+        </full-calendar> -->
+        <vue-event-calendar
+          :events="events"
+          @month-changed="handleMonthChanged"
+          @day-changed="handleDayChanged">
+        </vue-event-calendar>
 <!--         <div class="legend">
           <ul>
             <li><span class="color" style="background: #abc327;"></span><span>Confirmed Event</span></li>
@@ -36,12 +39,14 @@
 var moment = require('moment');
 import { EventBus } from './event-bus.js';
 import { Loading } from 'element-ui';
+import _ from 'lodash';
 
 export default {
   name: 'calendar',
 
   data () {
     return {
+      events: [],
       eventSources: [
         {
           events(start, end, timezone, callback) {
@@ -87,6 +92,33 @@ export default {
     dayClick (date) {
       this.$emit('select-date', date);
     },
+    handleDayChanged (obj) {
+      this.$emit('select-date', moment(new Date(obj.date)));
+    },
+    handleMonthChanged (month) {
+      this.applyFilterByMonth(month);
+    },
+    applyFilterByMonth (month) {
+      let dates = _(moment(month, 'MM/YYYY').daysInMonth() + 1)
+        .range().drop()
+        .map(day => moment(`${day}/${month}`, "DD/MM/YYYY"))
+        .value();
+
+      let { mappers, filters } = this.$rules;
+
+      let timeslots = _(_.reduce(dates, (a, v) => _.concat(a, _.map(mappers, mapper => mapper(v))), []))
+        .flatten()
+        .filter(obj => _.some(filters, filter => filter(obj)))
+        .map('start')
+        .value();
+
+      // filter out scheduled timeslots
+      console.log(timeslots);
+
+      let availableDates = _(timeslots).map(date => date.format('YYYY/MM/DD')).uniq().value();
+
+      this.events = _(availableDates).map(date => ({ date, title: '' })).value();
+    },
     eventDrop (event) {
       this.$router.push({ path: '/' });
     },
@@ -96,6 +128,7 @@ export default {
   },
   mounted () {
     EventBus.$on('calendar-refetch-events', this.refetchEvents);
+    this.applyFilterByMonth(moment().format('MM/YYYY'));
   },
   beforeDestroy () {
     EventBus.$off('calendar-refetch-events', this.refetchEvents);

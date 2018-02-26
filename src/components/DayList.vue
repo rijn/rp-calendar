@@ -4,7 +4,7 @@
     <!-- <h4>{{ displayDate }}</h4> -->
     <el-row class="toolbox">
       <el-col :span="12">
-        <span>Timezone</span>
+        <!-- <span>Timezone</span>
         <el-select
           filterable
           remote
@@ -18,7 +18,7 @@
             :label="item"
             :value="item">
           </el-option>
-        </el-select>
+        </el-select> -->
       </el-col>
       <el-col :span="12">
         <el-switch
@@ -43,6 +43,8 @@
             @click="clickSlot(_slot)"
             :plain="slot !== _slot">
             {{ moment.tz(_slot.start.toISOString(), timezone).format(ampm ? "hh:mm a" : "HH:mm") }}
+            -
+            {{ moment.tz(_slot.end.toISOString(), timezone).format(ampm ? "hh:mm a" : "HH:mm") }}
           </el-button>
         </li>
       </ul>
@@ -84,6 +86,8 @@ export default {
 
   methods: {
     loadResources () {
+      this.applyFilterByDate(this.date);
+
       let loadingInstance = Loading.service({ fullscreen: true });
       window.$jsforce.query(`
         SELECT
@@ -95,12 +99,31 @@ export default {
           AND EndTime__c < ${moment.tz(this.date.clone().add(1, 'd').toISOString(), "America/Chicago").format()}
         `).then(res => {
         loadingInstance.close();
-        this.slots = res.records.map(record => Object.assign({
-          id: record.Name,
-          start: moment(record['StartTime__c']),
-          end: moment(record['EndTime__c'])
-        }));
+        // this.slots = res.records.map(record => Object.assign({
+        //   id: record.Name,
+        //   start: moment(record['StartTime__c']),
+        //   end: moment(record['EndTime__c'])
+        // }));
       });
+    },
+    applyFilterByDate (date) {
+      let { mappers, filters } = this.$rules;
+
+      let timeslots = _(mappers)
+        .map(mapper => mapper(date))
+        .flatten()
+        .filter(obj => _.some(filters, filter => filter(obj)))
+        .value();
+
+      // filter unavailable timeslots
+      let availableTimeslots = timeslots;
+
+      this.slots = _(availableTimeslots)
+        .map(({ start, duration }) => ({
+          start,
+          end: start.clone().add(duration)
+        }))
+        .value();
     },
     remoteMethod (query) {
       if (query !== '') {
