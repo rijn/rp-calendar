@@ -1,12 +1,17 @@
 public with sharing class CalendarController {
 
   @RemoteAction
-  public static String schedule(
-    String id,
+  public static String insertEvent(
     String name,
+    Long startTime, Long endTime,
+    String description,
     String email
   ) {
     String ret = '';
+
+    if (startTime > endTime) {
+      return 'Start time should be earlier than end time.';
+    }
 
     if (name == '') {
       return 'Name cannot be empty';
@@ -35,7 +40,7 @@ public with sharing class CalendarController {
 
     try {
       insert new CalendarEvent__c(
-        Title__c = title,
+        Name__c = name,
         StartTime__c = dtStartTime, EndTime__c = dtEndTime,
         Detail__c = description,
         Email__c = email
