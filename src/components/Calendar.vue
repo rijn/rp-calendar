@@ -99,25 +99,43 @@ export default {
       this.applyFilterByMonth(month);
     },
     applyFilterByMonth (month) {
-      let dates = _(moment(month, 'MM/YYYY').daysInMonth() + 1)
-        .range().drop()
-        .map(day => moment(`${day}/${month}`, "DD/MM/YYYY"))
-        .value();
+      let loadingInstance = Loading.service({ fullscreen: true });
 
-      let { mappers, filters } = this.$rules;
+      window.$jsforce.query(`
+        SELECT
+          Name, StartTime__c, EndTime__c
+        FROM
+          CalendarEvent__c
+        WHERE
+          StartTime__c >= ${moment(month, 'MM/YYYY').format()}
+          AND EndTime__c < ${moment(month, 'MM/YYYY').clone().add({ month: 1 }).format()}
+      `).then(res => {
+        let scheduledSlots = res.records.map(record => Object.assign({
+          id: record.Name,
+          start: moment(record['StartTime__c']),
+          end: moment(record['EndTime__c'])
+        }));
 
-      let timeslots = _(_.reduce(dates, (a, v) => _.concat(a, _.map(mappers, mapper => mapper(v))), []))
-        .flatten()
-        .filter(obj => _.some(filters, filter => filter(obj)))
-        .map('start')
-        .value();
+        let dates = _(moment(month, 'MM/YYYY').daysInMonth() + 1)
+          .range().drop()
+          .map(day => moment(`${day}/${month}`, "DD/MM/YYYY"))
+          .value();
 
-      // filter out scheduled timeslots
-      console.log(timeslots);
+        let { mappers, filters } = this.$rules;
 
-      let availableDates = _(timeslots).map(date => date.format('YYYY/MM/DD')).uniq().value();
+        let timeslots = _(_.reduce(dates, (a, v) => _.concat(a, _.map(mappers, mapper => mapper(v))), []))
+          .flatten()
+          .filter(obj => _.some(filters, filter => filter(obj)))
+          .value();
 
-      this.events = _(availableDates).map(date => ({ date, title: '' })).value();
+        let availableTimeslots = _.differenceBy(timeslots, scheduledSlots, v => v.start.unix());
+
+        let availableDates = _(availableTimeslots).map('start').map(date => date.format('YYYY/MM/DD')).uniq().value();
+
+        this.events = _(availableDates).map(date => ({ date, title: '' })).value();
+
+        loadingInstance.close();
+      });
     },
     eventDrop (event) {
       this.$router.push({ path: '/' });

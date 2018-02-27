@@ -119,7 +119,7 @@ export default {
 }
 
 .steps {
-  max-width: 600px;
+  max-width: 650px;
   margin: -40px 0 0 auto;
   /*position: absolute;*/
 

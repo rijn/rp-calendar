@@ -26,7 +26,7 @@
           >
             <el-input v-model="form.email"></el-input>
           </el-form-item>
-          <el-button type="primary" @click="schedule">Schedule</el-button>
+          <el-button type="primary" @click="schedule">Confirm</el-button>
         </el-form>
       </el-col>
     </el-row>
@@ -58,23 +58,22 @@ export default {
 
   methods: {
     schedule () {
-      this.$emit('schedule-success', this.name, this.email);
-      return;
-
       this.$refs.form.validate((valid) => {
         if (valid) {
           let loadingInstance = Loading.service({ fullscreen: true });
           Visualforce.remoting.Manager.invokeAction(
-            window.globalIds.CalendarController.schedule,
-            this.timeslot.id,
+            window.globalIds.CalendarController.insertEvent,
             this.form.name,
+            this.timeslot.start.valueOf(),
+            this.timeslot.end.valueOf(),
+            '',
             this.form.email,
             (error, event) => {
               loadingInstance.close();
               if (error) {
                 this.$error(error);
               } else {
-                this.$emit('schedule-success', name, email);
+                this.$emit('schedule-success', this.form.name, this.form.email);
                 EventBus.$emit('calendar-refetch-events');
               }
             },

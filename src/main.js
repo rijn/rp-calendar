@@ -28,16 +28,16 @@ Vue.use(Main);
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
-Vue.use(DatePicker);
+// Vue.use(DatePicker);
 Vue.use(Input);
 Vue.use(Steps);
 Vue.use(Step);
 Vue.use(Row);
 Vue.use(Col);
-Vue.use(Slider);
+// Vue.use(Slider);
 Vue.use(Switch);
-Vue.use(Select);
-Vue.use(Option);
+// Vue.use(Select);
+// Vue.use(Option);
 
 Vue.prototype.$message = Message;
 

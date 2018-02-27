@@ -50,7 +50,7 @@
       </ul>
     </el-row>
     <el-row style="margin-top: 30px;">
-      <el-button type="primary" :disabled="!slot" @click="confirm">Confirm</el-button>
+      <el-button type="primary" :disabled="!slot" @click="confirm">Next</el-button>
     </el-row>
   </div>
 </template>
@@ -58,6 +58,7 @@
 <script>
 var moment = require('moment-timezone');
 import { Loading } from 'element-ui';
+import _ from 'lodash';
 
 export default {
   name: 'day-list',
@@ -86,27 +87,28 @@ export default {
 
   methods: {
     loadResources () {
-      this.applyFilterByDate(this.date);
-
       let loadingInstance = Loading.service({ fullscreen: true });
       window.$jsforce.query(`
         SELECT
-          Name, Title__c, Detail__c, StartTime__c, EndTime__c, Confirmed__c
+          Name, StartTime__c, EndTime__c
         FROM
           CalendarEvent__c
         WHERE
           StartTime__c >= ${moment.tz(this.date.toISOString(), "America/Chicago").format()}
           AND EndTime__c < ${moment.tz(this.date.clone().add(1, 'd').toISOString(), "America/Chicago").format()}
         `).then(res => {
+        let scheduledSlots = res.records.map(record => Object.assign({
+          id: record.Name,
+          start: moment(record['StartTime__c']),
+          end: moment(record['EndTime__c'])
+        }));
+
+        this.applyFilterByDate(this.date, scheduledSlots);
+
         loadingInstance.close();
-        // this.slots = res.records.map(record => Object.assign({
-        //   id: record.Name,
-        //   start: moment(record['StartTime__c']),
-        //   end: moment(record['EndTime__c'])
-        // }));
       });
     },
-    applyFilterByDate (date) {
+    applyFilterByDate (date, scheduledSlots) {
       let { mappers, filters } = this.$rules;
 
       let timeslots = _(mappers)
@@ -115,8 +117,7 @@ export default {
         .filter(obj => _.some(filters, filter => filter(obj)))
         .value();
 
-      // filter unavailable timeslots
-      let availableTimeslots = timeslots;
+      let availableTimeslots = _.differenceBy(timeslots, scheduledSlots, v => v.start.unix());
 
       this.slots = _(availableTimeslots)
         .map(({ start, duration }) => ({
