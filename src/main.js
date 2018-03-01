@@ -5,8 +5,8 @@ import jsforce from 'jsforce';
 import FullCalendar from 'vue-full-calendar';
 import 'normalize.css/normalize.css';
 import {
-  Container, Header, Aside, Main, Button, Form, FormItem, DatePicker, Input,
-  Message, Steps, Step, Row, Col, Slider, Switch, Select, Option
+  Container, Header, Aside, Main, Button, Form, FormItem, Input,
+  Message, Steps, Step, Row, Col, Switch
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import lang from 'element-ui/lib/locale/lang/en';
@@ -28,16 +28,12 @@ Vue.use(Main);
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
-// Vue.use(DatePicker);
 Vue.use(Input);
 Vue.use(Steps);
 Vue.use(Step);
 Vue.use(Row);
 Vue.use(Col);
-// Vue.use(Slider);
 Vue.use(Switch);
-// Vue.use(Select);
-// Vue.use(Option);
 
 Vue.prototype.$message = Message;
 
