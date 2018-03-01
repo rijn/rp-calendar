@@ -1,38 +1,42 @@
 <template>
-  <!-- <el-container style="margin: 100px 20px 0 20px;"> -->
-    <!-- <el-main> -->
       <div id="content">
-<!--         <full-calendar
-          ref="calendar"
-          :event-sources="eventSources"
-          @event-created="eventCreated"
-          @event-drop="eventDrop"
-          @day-click="dayClick"
-          default-view="month"
-          :selectable="false"
-          :editable="false"
-          :header="{
-            left: 'prev,next today',
-            center: '',
-            right: 'title'
-          }">
-        </full-calendar> -->
+        <el-row class="toolbox">
+          <el-col :span="24">
+            <i class="el-icon-date"></i>
+            <el-switch
+              style="display: inline-block; margin: 5px 0;"
+              v-model="displayInList"
+              active-color="#dcdfe6"
+              inactive-color="#dcdfe6"
+              active-text="List"
+              inactive-text="Calendar">
+            </el-switch>
+            <i class="el-icon-tickets"></i>
+          </el-col>
+        </el-row>
         <vue-event-calendar
           :events="events"
+          :showCalendar="!displayInList"
           @month-changed="handleMonthChanged"
           @day-changed="handleDayChanged">
         </vue-event-calendar>
-<!--         <div class="legend">
-          <ul>
-            <li><span class="color" style="background: #abc327;"></span><span>Confirmed Event</span></li>
-            <li><span class="color" style="background: #eacf02;"></span><span>Unconfirmed Event</span></li>
+        <div v-if="displayInList">
+          <ul style="text-align: center;">
+            <li v-if="events.length === 0">
+              unavailable
+            </li>
+            <li v-for="_event in events">
+              <el-button
+                class="time-button"
+                type="primary"
+                @click="handleDayChanged(_event)"
+                plain>
+                {{ moment(_event.date, "YYYY/MM/DD").format("YYYY-MM-DD dddd") }}
+              </el-button>
+            </li>
           </ul>
-        </div> -->
+        </div>
       </div>
-    <!-- </el-main> -->
-    <!-- <el-aside class="aside" v-if="$route.params.eventId"><router-view></router-view></el-aside> -->
-  <!-- </el-container> -->
-
 </template>
 
 <script>
@@ -46,49 +50,12 @@ export default {
 
   data () {
     return {
-      events: [],
-      eventSources: [
-        {
-          events(start, end, timezone, callback) {
-            let loadingInstance = Loading.service({ fullscreen: true });
-            window.$jsforce.query(`
-              SELECT
-                Name, Title__c, Detail__c, StartTime__c, EndTime__c, Confirmed__c
-              FROM
-                CalendarEvent__c
-              WHERE
-                StartTime__c >= ${moment(start.toISOString()).toISOString()}
-                AND EndTime__c < ${moment(end.toISOString()).toISOString()}
-              `).then(res => {
-              loadingInstance.close();
-              callback(res.records.map(record => Object.assign({
-                id: record.Name,
-                title: record['Title__c'],
-                start: moment(record['StartTime__c']),
-                end: moment(record['EndTime__c']),
-                editable: false,
-              }, record['Confirmed__c'] ? {
-                title: 'Schduled',
-                backgroundColor: 'rgba(171, 195, 39, 0.7)',
-                borderColor: 'rgba(171, 195, 39, 1)'
-              } : {
-                title: 'Available',
-                backgroundColor: 'rgba(171, 195, 39, 0.2)',
-                borderColor: 'rgba(171, 195, 39, 0.4)',
-                textColor: 'rgba(0, 0, 0, 0.4)'
-              })));
-            });
-          },
-          color: 'yellow',
-          textColor: 'black',
-        }
-      ]
+      moment,
+      displayInList: false,
+      events: []
     };
   },
   methods: {
-    eventCreated (event) {
-      // this.$router.push({ path: `/new?start=${moment(event.start.format()).valueOf()}&end=${moment(event.end.format()).valueOf() - 1}` });
-    },
     dayClick (date) {
       this.$emit('select-date', date);
     },
@@ -137,9 +104,6 @@ export default {
         loadingInstance.close();
       });
     },
-    eventDrop (event) {
-      this.$router.push({ path: '/' });
-    },
     refetchEvents () {
       this.$refs.calendar.$emit('refetch-events');
     }
@@ -187,5 +151,21 @@ export default {
   padding: 30px;
   border-radius: 30px;
   background: #f5f5f5;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+.time-button {
+  max-width: 300px;
+  width: 100%;
+  padding: 20px;
+  margin: 5px;
+  font-size: 1em;
 }
 </style>

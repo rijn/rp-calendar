@@ -5,7 +5,7 @@
       <div class="title">{{curYearMonth}}</div>
       <div class="r" @click="nextMonth"><div class="arrow-right icon">&nbsp</div></div>
     </div>
-    <div class="cal-body">
+    <div class="cal-body" v-if="showCalendar">
       <div class="weeks">
         <span
           v-for="(dayName, dayIndex) in i18n[calendar.options.locale].dayNames"
@@ -50,6 +50,7 @@ export default {
     }
   },
   props: {
+    showCalendar: Boolean,
     events: {
       type: Array,
       required: true
