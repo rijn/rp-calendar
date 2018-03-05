@@ -4,6 +4,7 @@
       :events="events"
       :calendar="calendarOptions"
       :selectedDay='selectedDayEvents.date'
+      :showCalendar="showCalendar"
       @cur-day-changed="handleChangeCurDay"
       @month-changed="handleMonthChanged">
     </cal-panel>
@@ -30,6 +31,7 @@ export default {
   },
   props: {
     title: String,
+    showCalendar: Boolean,
     events: {
       type: Array,
       required: true,
@@ -146,7 +148,7 @@ export default {
     margin: 0 auto;
     .cal-wrapper{
       width: 100%;
-      padding: 100px 50px;
+      padding: 40px;
       .date-num{
         line-height: 50px;
       }
