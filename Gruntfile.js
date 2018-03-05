@@ -30,7 +30,7 @@ module.exports = function (grunt) {
     },
     clean: {
       options: {},
-      dist: [ 'dist' ]
+      dist: [ 'docs' ]
     },
     eslint: {
       target: [
