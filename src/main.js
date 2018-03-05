@@ -11,7 +11,7 @@ import {
 import 'element-ui/lib/theme-chalk/index.css';
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
-import 'vue-event-calendar/dist/style.css';
+// import 'vue-event-calendar/dist/style.css';
 import vueEventCalendar from './components/vue-event-calendar';
 
 Vue.use(vueEventCalendar, {locale: 'en'});
